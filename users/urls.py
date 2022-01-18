@@ -5,11 +5,6 @@ from django.urls import path
 
 # Views
 from users import views as users_views
-<<<<<<< HEAD
-#from django.views.generic import TemplateView
-=======
-
->>>>>>> clase29
 
 urlpatterns = [
     path(route='profile/<str:username>/', view=users_views.UserDetailView.as_view(), name='detail' ),
