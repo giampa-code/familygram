@@ -4,8 +4,15 @@
 from multiprocessing import context
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib import messages
+from django.views.generic import DetailView
+
+# Models
+from django.contrib.auth.models import User
+from posts.models import Post
 
 # forms
 from users.forms import ProfileForm, SignUpForm
@@ -74,7 +81,8 @@ def update_view(request):
             profile.picture = data['picture']
             profile.save()
             messages.success(request, 'Your profile has been updated!')
-            return redirect('users:update')
+            url = reverse('users:detail', kwargs={'username':request.user.username})
+            return redirect(url)
         else:
             form = ProfileForm(request.POST, request.FILES)
 
@@ -91,3 +99,21 @@ def update_view(request):
             'form': form
         }
     )
+
+# Vista detallada para el usuario
+class UserDetailView(LoginRequiredMixin, DetailView):
+    """User detail view"""
+    template_name = 'users/detail.html'
+    # QuerySet
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+    queryset = User.objects.all()
+    context_object_name = 'user'
+
+    # sobre escribiendo una función
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.get_object()
+        context['posts'] = Post.objects.filter(user=user).order_by('-created')
+        return context

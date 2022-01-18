@@ -28,6 +28,7 @@ class ProfileCompletionMiddleware:
                         messages.error(request, 'Debes tener una imagen y una biografía para poder usar la app.')
                         return redirect('users:update')
 
+
         response = self.get_response(request)
 
         return response
