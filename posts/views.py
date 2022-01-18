@@ -4,6 +4,11 @@ from multiprocessing import context
 from re import template
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import DetailView
+from django.urls import reverse
+
 
 # Forms
 from posts.forms import PostForm
@@ -12,46 +17,14 @@ from posts.forms import PostForm
 from posts.models import Post
 
 
-# Utilities
-#from datetime import datetime
 
-# Create your views here.
-
-# posts = [
-#     {
-#         'title': 'Mont Blanc',
-#         'user': {
-#             'name': 'Yésica Cortés',
-#             'picture': 'https://picsum.photos/60/60/?image=1027'
-#         },
-#         'timestamp': datetime.now().strftime('%b %dth, %Y - %H:%M hrs'),
-#         'photo': 'https://picsum.photos/800/600?image=1036',
-#     },
-#     {
-#         'title': 'Via Láctea',
-#         'user': {
-#             'name': 'Christian Van der Henst',
-#             'picture': 'https://picsum.photos/60/60/?image=1005'
-#         },
-#         'timestamp': datetime.now().strftime('%b %dth, %Y - %H:%M hrs'),
-#         'photo': 'https://picsum.photos/800/800/?image=903',
-#     },
-#     {
-#         'title': 'Nuevo auditorio',
-#         'user': {
-#             'name': 'Uriel (thespianartist)',
-#             'picture': 'https://picsum.photos/60/60/?image=883'
-#         },
-#         'timestamp': datetime.now().strftime('%b %dth, %Y - %H:%M hrs'),
-#         'photo': 'https://picsum.photos/500/700/?image=1076',
-#     }
-# ]
-
-@login_required
-def list_posts(request):
-    """List existing posts"""
-    posts = Post.objects.all().order_by('-created')
-    return render(request, 'posts/feed.html',{'posts':posts})
+class PostsFeedView(LoginRequiredMixin, ListView):
+    """Return all published posts."""
+    template_name = 'posts/feed.html'
+    model = Post
+    ordering = ('-created')
+    paginate_by = 6
+    context_object_name = 'posts'
 
 @login_required
 def create_post(request):
@@ -74,3 +47,24 @@ def create_post(request):
             'profile': request.user.profile
         }
     )
+
+
+# Vista post usando funcs
+@login_required
+def view_post(request, post_id='post_id'):
+    """View a post"""
+    post = Post.objects.get(id=post_id)
+    #import pdb; pdb.set_trace()
+
+    return render(request, template_name='posts/post.html', context={'post':post})
+    
+
+# Vista detallada para el usuario usando ClassViews
+class PostView(LoginRequiredMixin, DetailView):
+    """Post detail view"""
+    template_name = 'posts/post.html'
+    # QuerySet
+    slug_field = 'id'
+    slug_url_kwarg = 'post_id'
+    queryset = Post.objects.all()
+    context_object_name = 'post'
