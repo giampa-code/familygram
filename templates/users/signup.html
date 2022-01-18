@@ -1,0 +1,20 @@
+{% extends 'users/base.html' %}
+
+{% block head_content %}
+    <title>Plaztigram sign up</title>
+{% endblock head_content %}
+
+{% block container %}
+
+    <form action="{%url 'users:signup' %}" method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button class="btn btn-primary btn-block mt-3" type="submit">Sign in!</button>
+
+    </form>
+
+    <p class="mt-4">Already have a user?</p><a href="{%url 'users:login' %}"> Click here to login. </a>
+
+{% endblock container %}
