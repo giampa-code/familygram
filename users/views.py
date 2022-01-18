@@ -6,16 +6,17 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from django.views.generic import DetailView
+from django.views.generic import DetailView, FormView, UpdateView
 
 # Models
 from django.contrib.auth.models import User
 from posts.models import Post
 
 # forms
-from users.forms import ProfileForm, SignUpForm
+from users.forms import  SignUpForm
+from users.models import Profile
 
 # Create your views here.
 def login_view(request):
@@ -49,6 +50,17 @@ def logout_view(request):
     return redirect('users:login')
 
 
+class SignUpView(FormView):
+    """Users signup view with Class Views"""
+    template_name ='users/signup.html'
+    form_class = SignUpForm
+    success_url = reverse_lazy('users:login')
+
+    def form_valid(self, form):
+        """Save form data"""
+        form.save()
+        return super().form_valid(form)
+
 def signup_view(request):
     """User signup view"""
     if request.method == 'POST':
@@ -68,37 +80,20 @@ def signup_view(request):
     )
 
 
-@login_required
-def update_view(request):
-    profile = request.user.profile
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES)
-        if form.is_valid():
-            data = form.cleaned_data
-            profile.website = data['website']
-            profile.phone_number = data['phone_number']
-            profile.biography = data['biography']
-            profile.picture = data['picture']
-            profile.save()
-            messages.success(request, 'Your profile has been updated!')
-            url = reverse('users:detail', kwargs={'username':request.user.username})
-            return redirect(url)
-        else:
-            form = ProfileForm(request.POST, request.FILES)
+class UpdateProfileView(LoginRequiredMixin, UpdateView):
+    """Update profile view with Class Views."""
+    template_name = 'users/update_profile.html'
+    model = Profile
+    fields = ['website', 'biography', 'phone_number', 'picture']
+    
+    def get_object(self):
+        """Returns users profile"""
+        return self.request.user.profile
 
-
-    else:
-        form = ProfileForm()
-
-    return render(
-        request=request,
-        template_name = 'users/update_profile.html',
-        context = {
-            'profile': profile,
-            'user': request.user,
-            'form': form
-        }
-    )
+    def get_success_url(self):
+        """Return to users profile"""
+        username = self.object.user.username
+        return reverse('users:detail', kwargs={'username': username})
 
 # Vista detallada para el usuario
 class UserDetailView(LoginRequiredMixin, DetailView):

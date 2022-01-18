@@ -6,8 +6,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView
-from django.urls import reverse
+from django.views.generic import DetailView, CreateView
+from django.urls import reverse_lazy
 
 
 # Forms
@@ -26,9 +26,22 @@ class PostsFeedView(LoginRequiredMixin, ListView):
     paginate_by = 6
     context_object_name = 'posts'
 
+class CreatePostView(LoginRequiredMixin, CreateView):
+    """Create a new post with class views"""
+    template_name = 'posts/new.html'
+    form_class = PostForm
+    success_url = reverse_lazy('posts:feed')
+
+    def get_context_data(self, **kwargs):
+        """Add user and profile to context"""
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        context['profile'] = self.request.user.profile
+        return context
+
 @login_required
 def create_post(request):
-    """Create a new post"""
+    """Create a new post with functions views"""
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
