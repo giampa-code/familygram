@@ -22,16 +22,12 @@ from django.conf.urls.static import static # para ver fotos
 
 # Views
 from familygram import views as local_views
-from posts import views as posts_views
-from users import views as users_views
+
 
 
 urlpatterns = [
-    # playing
-    path('hello-world/', local_views.hello_world, name='hello_world'),
-    path('sorted-nums/', local_views.sorted_nums, name='sort'),
-    path('hi/<str:name>/<int:age>', local_views.say_hi, name='hi'), 
-    path('amor/',local_views.amor),
+    # home
+    path('', local_views.home, name='home'),
     
     # admin
     path('admin/', admin.site.urls, name='admin'),
