@@ -2,7 +2,7 @@
 # Django
 
 from multiprocessing import context
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
@@ -18,28 +18,18 @@ from posts.models import Post
 from users.forms import  SignUpForm
 from users.models import Profile
 
-# Create your views here.
-def login_view(request):
-    """Login view"""
-    #if the user is already logged
-    if request.user.is_authenticated:
-        return redirect('posts:feed')
+
+# Login Class View
+class LoginView(auth_views.LoginView):
+    """Login view with classes"""
+    template_name = 'users/login.html'
+    redirect_authenticated_user = True
 
 
-    if request.method == 'POST':
-
-        username = request.POST['username']
-        password = request.POST['password']
-
-        user = authenticate(request, username=username, password=password)
-        if user:
-            login(request, user)
-            return redirect('posts:feed')
-        else:
-            return render(request, 'users/login.html', {'error':'Invalid username or password'})
-
-
-    return render(request, 'users/login.html')
+# Logout class view
+class LogoutView(LoginRequiredMixin, auth_views.LogoutView):
+    """Logout view with classes"""
+    pass
 
 
 @login_required
@@ -60,24 +50,6 @@ class SignUpView(FormView):
         """Save form data"""
         form.save()
         return super().form_valid(form)
-
-def signup_view(request):
-    """User signup view"""
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            redirect('users:login')
-    else:
-        form = SignUpForm()
-    
-    return render(
-        request=request,
-        template_name='users/signup.html',
-        context={
-            'form':form,
-        }
-    )
 
 
 class UpdateProfileView(LoginRequiredMixin, UpdateView):
@@ -111,4 +83,5 @@ class UserDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         user = self.get_object()
         context['posts'] = Post.objects.filter(user=user).order_by('-created')
+        #import pdb; pdb.set_trace()
         return context
