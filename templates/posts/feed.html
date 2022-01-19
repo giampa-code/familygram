@@ -8,6 +8,13 @@
 
 {% block container %}
     <div class="container">
+        {% if messages %}
+            <ul class="messages list-unstyled">
+                {% for message in messages %}
+                <li  {% if message.tags %} style="margin-top: 100px; margin-bottom: 0px" class=" alert alert-success {{ message.tags }} " {% endif %}> {{ message }} </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         <div class="row">
             {% for post in posts %}
                 {% include 'posts/post_card.html' %}

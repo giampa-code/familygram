@@ -63,7 +63,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     #our middleware
-    'familygram.middleware.ProfileCompletionMiddleware'
+    'familygram.middleware.ProfileCompletionMiddleware',
+    'familygram.middleware.NotStaffMiddleware',
 ]
 
 ROOT_URLCONF = 'familygram.urls'
