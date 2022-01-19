@@ -26,6 +26,7 @@ class PostsFeedView(LoginRequiredMixin, ListView):
     paginate_by = 6
     context_object_name = 'posts'
 
+
 class CreatePostView(LoginRequiredMixin, CreateView):
     """Create a new post with class views"""
     template_name = 'posts/new.html'

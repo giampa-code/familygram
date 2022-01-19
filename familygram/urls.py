@@ -1,4 +1,4 @@
-"""platzigram URL Configuration
+"""familygram URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.0/topics/http/urls/
@@ -21,7 +21,7 @@ from django.urls import path, include
 from django.conf.urls.static import static # para ver fotos
 
 # Views
-from platzigram import views as local_views
+from familygram import views as local_views
 from posts import views as posts_views
 from users import views as users_views
 

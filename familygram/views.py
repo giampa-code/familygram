@@ -1,4 +1,4 @@
-"""Platzigram views"""
+"""familygram views"""
 
 # Django
 from django.http import HttpResponse, JsonResponse
