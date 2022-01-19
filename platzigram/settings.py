@@ -158,4 +158,6 @@ MEDIA_URL = '/media/'
 
 # Login URL
 
-LOGIN_URL = 'login' # the name of the url
+LOGIN_URL = 'users/login' # the name of the url
+LOGIN_REDIRECT_URL = '/feed'
+LOGOUT_REDIRECT_URL = 'login'

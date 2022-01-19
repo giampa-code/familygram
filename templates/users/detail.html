@@ -22,24 +22,35 @@
                             Edit profile
                         </a>
                     {% else %}
+                    {# Remove follow #}
+                    <!--
                         <a
                             href=""
                             class="ml-5 btn btn-sm btn-primary"
                         >
                             Follow
                         </a>
+                    -->
                     {% endif %}
                 </h2>
                 <div class="row mt-2" style="font-size: 1.2em">
                     <div class="col-sm-4">
-                        <b>{{ user.profile.posts_count }}785</b> posts
+                        {% if posts|length > 1 %}
+                            <b>{{ posts|length }}</b> posts
+                        {% else %}
+                            <b>{{ posts|length }}</b> post
+                        {% endif %}
+                        
                     </div>
+                    {# Remove follows #}
+                    <!--
                     <div class="col-sm-4">
                         <b>{{ user.profile.followers }}1,401</b> followers
                     </div>
                     <div class="col-sm-4">
                         <b>{{ user.profile.following }}491</b> following
                     </div>
+                    -->
                 </div>
                 <div class="row mt-4">
                     <div class="col-sm-12">
